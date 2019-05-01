@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+int rektransform (int num, int pos, int rez)
+{
+    if(num==0)
+        return rez;
+    else
+    {
+        int cifra = num%10;
+        int novacifra = (cifra + pos)%10;
+        int stepen = 1;
+        int i=pos;
+        while(i>1)
+        {
+            stepen*=10;
+            i--;
+        }
+        return rektransform(num/10,pos+1,rez+(novacifra*stepen));
+    }
+}
+int main()
+{
+    int niza[100] ;
+    int N;
+    scanf("%i",&N);
+    int i;
+    for(i=0; i<N; i++)
+    {
+        scanf("%i",&niza[i]);
+    }
+    for(i=0; i<N/2; i++)
+    {
+        int a = niza[i];
+        int b;
+        if(N%2==0)
+            b = niza[N/2+i];
+        else
+            b = niza[N/2+1+i];
+        niza[i]=rektransform(b,1,0);
+        if(N%2==0)
+            niza[N/2 +i]=rektransform(a,1,0);
+        else
+            niza[N/2+1 +i]=rektransform(a,1,0);
+    }
+    if(N%2!=0)
+        niza[N/2] = rektransform(niza[N/2],1,0);
+    for(i=0;i<N; i++)
+    {
+        printf("%i ",niza[i]);
+    }
+    return 0;
+}

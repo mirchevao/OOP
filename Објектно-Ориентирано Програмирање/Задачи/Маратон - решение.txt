@@ -1,0 +1,128 @@
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+class Ucesnik
+{
+private:
+    char* ime;
+    bool pol;
+    int vozrast;
+public:
+    Ucesnik(const char* _ime="", bool _pol=false, int _vozrast=0)
+    {
+        this->ime=new char[strlen(_ime)+1];
+        strcpy(this->ime, _ime);
+        this->pol=_pol;
+        this->vozrast=_vozrast;
+    }
+    Ucesnik(Ucesnik& ob)
+    {
+        delete[] this->ime;
+        this->ime=new char[strlen(ob.ime)+1];
+        strcpy(this->ime, ob.ime);
+        this->pol=ob.pol;
+        this->vozrast=ob.vozrast;
+    }
+    ~Ucesnik()
+    {
+        delete[] this->ime;
+    }
+    Ucesnik& operator=(Ucesnik& ob)
+    {
+        if (this!=&ob)
+        {
+            delete[] this->ime;
+            this->ime=new char[strlen(ob.ime)+1];
+            strcpy(this->ime, ob.ime);
+            this->pol=ob.pol;
+            this->vozrast=ob.vozrast;
+        }
+        return *this;
+    }
+    int getVozrast()
+    {
+        return this->vozrast;
+    }
+    bool operator>(Ucesnik& ob)
+    {
+        return this->vozrast>ob.vozrast;
+    }
+    friend ostream& operator<<(ostream& out, Ucesnik& ob)
+    {
+        out << ob.ime << endl;
+        if (ob.pol)
+            out << "mashki" << endl;
+        else
+            out << "zhenski" << endl;
+        out << ob.vozrast << endl;
+        return out;
+    }
+};
+
+class Maraton
+{
+private:
+    char lokacija[100];
+    Ucesnik* niza;
+    int brojNaUcesnici;
+public:
+    Maraton(char* _lokacija="")
+    {
+        strcpy(this->lokacija, _lokacija);
+        this->niza=NULL;
+        this->brojNaUcesnici=0;
+    }
+    ~Maraton()
+    {
+        delete[] this->niza;
+    }
+    Maraton& operator+=(Ucesnik& ob)
+    {
+        Ucesnik *temp=new Ucesnik[this->brojNaUcesnici+1];
+        copy(this->niza, this->niza+this->brojNaUcesnici, temp);
+        temp[this->brojNaUcesnici++]=ob;
+        delete[] this->niza;
+        this->niza=temp;
+        return *this;
+    }
+    double prosecnoVozrast()
+    {
+        int zbir=0;
+        for (int i=0; i<this->brojNaUcesnici; ++i)
+            zbir+=this->niza[i].getVozrast();
+        return zbir/((double)(this->brojNaUcesnici));
+    }
+    void pecatiPomladi(Ucesnik &u)
+    {
+        for (int i=0; i<this->brojNaUcesnici; ++i)
+            if (u>this->niza[i])
+                cout << this->niza[i];
+    }
+};
+
+int main() {
+    char ime[100];
+    bool maski;
+    int vozrast, n;
+    cin >> n;
+    char lokacija[100];
+    cin >> lokacija;
+    Maraton m(lokacija);
+    Ucesnik **u = new Ucesnik*[n];
+    for(int i = 0; i < n; ++i) {
+        cin >> ime >> maski >> vozrast;
+    	u[i] = new Ucesnik(ime, maski, vozrast);
+
+        m += *u[i];
+    }
+	m.pecatiPomladi(*u[n - 1]);
+    cout << m.prosecnoVozrast() << endl;
+    for(int i = 0; i < n; ++i) {
+        delete u[i];
+    }
+    delete [] u;
+	return 0;
+}

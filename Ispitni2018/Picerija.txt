@@ -1,0 +1,215 @@
+Пицерија Problem 3 (4 / 9)
+Да се дефинира класа Пица за која ќе се чуваат податоци за:
+
+име на пицата (низа од 15 знаци)
+цена (цел број)
+состојки (динамички алоцирана низа од знаци)
+намалување на цената во проценти (цел број) - ако пицата не е на промоција намалувањето има вредност нула, во спротивно, вредност поголема од нула и не поголема од 100.
+За потребите на оваа класа да се креираат потребните конструктори и да се напише соодветен деструктор. Дополнително за оваа класа да се дефинира функцијата:
+
+pecati() - функција во која ќе се печатат податоците за пицата во следниот формат: име - состојки, цена.
+istiSe(Pica p) - функција за споредба на две пици според состојките :
+Да се дефинира класа Picerija во која се чуваат:
+
+име (низа од максимум 15 знаци)
+динмички алоцирана низа од објекти од класата Pica
+број на пици (цел број)
+За потребите на оваа класа да се дефинираат потребните конструктори и да се напише соодветен деструктор. Да се имплементираат и следниве методи:
+
+dodadi(Pica P) - за додавање нова пица во пицеријата, но само ако не постои иста во низата (нема пица со исти состојки со пицата што треба да се додаде).
+void piciNaPromocija() - се печатат сите пици од пицеријата што се на промоција во формат : име - состојки, цена, цена со попуст.
+
+#include <iostream>
+#include <cstring>
+ 
+using namespace std;
+ 
+//Vasiot kod tuka
+class Pica{
+    private:
+    char ime[15];
+    int cena;
+    char *sostojki; // DIN AL.
+    int namaluvanje;
+   
+    public:
+    Pica(){sostojki = new char[0];} // default constructor
+    Pica(char *ime, int cena, char *s, int n) // constructor with arguments
+    {
+        strcpy(this->ime, ime);
+        this->cena=cena;
+        sostojki=new char [strlen(s)+1];
+        strcpy(sostojki,s);
+        namaluvanje=n;
+    }
+    Pica(const Pica &p) // copy constructor
+    {
+        strcpy(ime,p.ime);
+        cena=p.cena;
+        sostojki=new char [strlen(p.sostojki)+1];
+        strcpy(sostojki,p.sostojki);
+        namaluvanje=p.namaluvanje;
+    }
+    Pica& operator= (const Pica &p) // preoptovaruvanje na =
+    {
+        if(this!=&p)
+        {
+            delete[] sostojki;
+                strcpy(ime,p.ime);
+                cena=p.cena;
+                sostojki=new char [strlen(p.sostojki)+1];
+            strcpy(sostojki,p.sostojki);
+                namaluvanje=p.namaluvanje;
+        }
+        return *this;
+    }
+    ~Pica(){delete[] sostojki;} // destructor
+   
+    int getNamaluvanje(){
+        return namaluvanje;}
+   
+    char* getSostojki(){
+        return sostojki;}
+       
+   
+    void pecati()
+    {
+        cout<<ime<<" - "<<sostojki<<", "<<cena<<" "<<cena-cena*namaluvanje/100;
+    }
+    bool istiSe(Pica p)
+    {
+        if(strcpy(p.sostojki,sostojki)==0)
+            return 1;
+        else return 0;
+    }
+ 
+};
+ 
+class Picerija{
+    private:
+    char ime[15];
+    Pica *pici; // DIN AL.
+    int brPici;
+   
+    public:
+    Picerija(){pici=new Pica[0];} // default constructor
+    Picerija(char *ime, Pica *p, int brP) // constructor with arguments
+    {
+        strcpy(this->ime,ime);
+        pici=new Pica[brP];
+        for(int i=0;i<brP;i++)
+            pici[i]=p[i];
+        brPici=brP;
+    }
+    Picerija(char *ime) // constructor with one argument
+    {
+        strcpy(this->ime,ime);
+        pici=new Pica[0];
+        brPici=0;
+    }
+    Picerija(const Picerija &p) // copy constructor
+    {
+        strcpy(ime,p.ime);
+        pici=new Pica [p.brPici];
+        for(int i=0;i<p.brPici;i++)
+            pici[i]=p.pici[i];
+        brPici=p.brPici;
+    }
+    Picerija& operator= (const Picerija &p) // preoptovaruvanje na =
+    {
+        if(this!=&p)
+        {
+            delete [] pici;
+            strcpy(ime,p.ime);
+                pici=new Pica [p.brPici];
+                for(int i=0;i<p.brPici;i++)
+                pici[i]=p.pici[i];
+                brPici=p.brPici;
+        }
+        return *this;
+    }
+    ~Picerija(){delete[] pici;}
+   
+    void setIme(char *ime){
+        strcpy(this->ime,ime);}
+    char* getIme(){
+        return ime;}
+   
+    void dodadi(Pica P) // da se dodade nova pica vo picerijata, no prvo da se proveri dali ima isti sostojki.
+    {
+        for(int i=0;i<brPici;i++)
+                if(strcmp(P.getSostojki(),pici[i].getSostojki())==0)
+                return;
+        Pica *tmp;
+        tmp=new Pica[brPici];
+        for(int i=0;i<brPici;i++)
+            tmp[i]=pici[i];
+        delete[] pici;
+        pici=new Pica[brPici+1];
+        for(int i=0;i<brPici;i++)
+            pici[i]=tmp[i];
+        pici[brPici]=P;
+        brPici++;
+        delete [] tmp;
+    }
+   
+    void piciNaPromocija()
+    {
+        for(int i=0;i<brPici;i++)
+            if(pici[i].getNamaluvanje()>0){
+                pici[i].pecati();
+            cout<<endl;}
+    }
+ 
+}; 
+
+
+int main () {
+
+    int n;
+    char ime[15];
+    cin >> ime;
+    cin >> n;
+
+    Picerija p1(ime);
+    for(int i = 0; i < n; i++){
+        char imp[100];
+        cin.get();
+        cin.getline(imp,100);
+        int cena;
+        cin >> cena;
+        char sostojki[100];
+        cin.get();
+        cin.getline(sostojki,100);
+        int popust;
+        cin >> popust;
+        Pica p(imp,cena,sostojki,popust);
+        p1.dodadi(p);
+    }
+
+    Picerija p2 = p1;
+    cin >> ime;
+    p2.setIme(ime);
+    char imp[100];
+    cin.get();
+    cin.getline(imp,100);
+    int cena;
+    cin >> cena;
+    char sostojki[100];
+    cin.get();
+    cin.getline(sostojki,100);
+    int popust;
+    cin >> popust;
+    Pica p(imp,cena,sostojki,popust);
+    p2.dodadi(p);
+
+    cout<<p1.getIme()<<endl;
+    cout<<"Pici na promocija:"<<endl;
+    p1.piciNaPromocija();
+
+    cout<<p2.getIme()<<endl;
+    cout<<"Pici na promocija:"<<endl;
+    p2.piciNaPromocija();
+
+	return 0;
+}

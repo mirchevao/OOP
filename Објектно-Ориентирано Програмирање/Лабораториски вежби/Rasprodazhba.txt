@@ -1,0 +1,153 @@
+#include <iostream>
+#include <cstring>
+#include <string.h>
+
+using namespace std;
+
+class Predmet {
+protected:
+    char *sopstvenik;
+    char ime[100];
+    int cena;
+public:
+    virtual double prodazhna_cena()=0;
+
+    Predmet() {
+    }
+    Predmet(char *s, char *i, int c) {
+        sopstvenik=new char[strlen(s)+1];
+        strcpy(sopstvenik,s);
+        strcpy(ime,i);
+        cena=c;
+    }
+    Predmet(const Predmet &p) {
+        sopstvenik=new char[strlen(p.sopstvenik)+1];
+        strcpy(sopstvenik, p.sopstvenik);
+        strcpy(ime, p.ime);
+        cena=p.cena;
+    }
+    Predmet &operator=(Predmet &pr) {
+        if (this!=&pr) {
+            sopstvenik=new char[strlen(pr.sopstvenik)+1];
+            strcpy(sopstvenik, pr.sopstvenik);
+            strcpy(ime, pr.ime);
+            cena=pr.cena;
+        }
+        return *this;
+    }
+    ~Predmet() {
+        delete [] sopstvenik;
+    }
+    friend ostream &operator<<(ostream &out,Predmet &p) {
+        out << p.sopstvenik << "#" << p.ime << "#" << p.cena << endl;
+        return out;
+    }
+};
+class TehnichkiPredmet : public Predmet {
+private:
+    bool garancija;
+public:
+    TehnichkiPredmet() {	
+    }
+    TehnichkiPredmet(char *s, char *i, int c, bool g) : Predmet(s, i, c) {
+        garancija=g;
+    }
+    double prodazhna_cena() {
+        if (garancija==true) {
+            return cena+1000;
+        } else {
+            return 0.2*1000+cena;
+        }
+    }
+
+};
+
+class ObichenPredmet : public Predmet {
+private:
+    float masa;
+public:
+    ObichenPredmet() {
+        masa=0;
+    }
+    ObichenPredmet(char *s, char *i, int c, float m) : Predmet(s, i, c) {
+        masa=m;
+    }
+    double prodazhna_cena() {
+        return ((masa*500)+(2*cena));
+    }
+};
+
+class Rasprodazhba {
+private:
+    Predmet **predmet;
+    int brojPredmeti;
+public:
+    Rasprodazhba() {
+        brojPredmeti=0;
+        predmet=NULL;
+    }
+    Rasprodazhba(Predmet **p,int brPredmeti) {
+        brojPredmeti=brPredmeti;
+        predmet=new Predmet*[brojPredmeti];
+        for(int i=0; i<brojPredmeti; i++) {
+            predmet[i]=p[i];
+        }
+    }
+    ~Rasprodazhba() {
+        delete [] predmet;
+    }
+    void dodadiPredmet(Predmet *p) {
+        Predmet **tmp=new Predmet*[brojPredmeti+1];
+        for(int i=0; i<brojPredmeti; i++) {
+            tmp[i]=predmet[i];
+        }
+        tmp[brojPredmeti]=p;
+        delete [] predmet;
+        brojPredmeti++;
+        predmet=new Predmet*[brojPredmeti];
+        for(int i=0; i<brojPredmeti; i++) {
+            predmet[i]=tmp[i];
+        }
+    }
+    Predmet& vratiNajevtinPredmet() {
+        double minCena=predmet[0]->prodazhna_cena();
+        int minIndeks=0;
+        for (int i=0; i<brojPredmeti; i++) {
+            if (minCena>predmet[i]->prodazhna_cena()) {
+                minCena=predmet[i]->prodazhna_cena();
+                minIndeks=i;
+            }
+        }
+        TehnichkiPredmet *tp=dynamic_cast<TehnichkiPredmet*>(predmet[minIndeks]);
+        if(tp!=0) {
+            return *tp;
+        }
+        ObichenPredmet *op=dynamic_cast<ObichenPredmet*>(predmet[minIndeks]);
+        if(op!=0) {
+            return *op;
+        }
+    }
+};
+
+int main() {
+    Rasprodazhba r;
+    char sopstvenik[100],ime[100];
+    bool garancija;
+    int kupen,masa;
+    int n;
+    cin>>n;
+    for (int i=0; i<n; i++) {
+        int tip;
+        cin>>tip;
+        if (tip==0) {
+            cin>>sopstvenik>>ime>>kupen>>garancija;
+            r.dodadiPredmet(new TehnichkiPredmet(sopstvenik, ime, kupen, garancija));
+        } else {
+            cin>>sopstvenik>>ime>>kupen>>masa;
+            r.dodadiPredmet(new ObichenPredmet(sopstvenik, ime, kupen, masa));
+        }
+    }
+
+    cout<<r.vratiNajevtinPredmet();
+    return 0;
+}

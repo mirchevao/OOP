@@ -1,0 +1,82 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class Masa {
+    private:
+	int dolzina;
+    int sirina;
+    public:
+    Masa () {
+    	dolzina=0;
+        sirina=0;
+    }
+    Masa (int s, int d) {
+    	sirina=s;
+        dolzina=d;
+    }
+    void pecati () {
+    	cout<<"Masa: "<<sirina<<" "<<dolzina<<" "<<endl;
+    }
+};
+
+class Soba {
+	private:
+    Masa masa;
+    int dolzinaSoba;
+    int sirinaSoba;
+	public:
+    Soba () {
+    }
+    Soba (int s, int d, const Masa &m) {
+    	sirinaSoba=s;
+        dolzinaSoba=d;
+        masa=m;
+    }
+    void pecati () {
+    	cout<<" Soba: "<<sirinaSoba<<" "<<dolzinaSoba<<" ";
+        masa.pecati();
+    }
+};
+
+class Kukja {
+	private:
+    Soba soba;
+    char adresa[50];
+    public:
+    Kukja () {
+    }
+    
+    Kukja (const Soba &s, char *a) {
+    	soba=s;
+        strcpy(adresa,a);
+    }
+    
+    void pecati () {
+    	cout<<"Adresa: "<<adresa;
+        soba.pecati();
+    }
+    
+};
+
+int main(){
+    int n;
+    cin>>n;
+    for(int i=0;i<n;i++){
+    	int masaSirina,masaDolzina;
+        cin>>masaSirina;
+        cin>>masaDolzina;
+    	Masa m(masaSirina,masaDolzina);
+    	int sobaSirina,sobaDolzina;
+        cin>>sobaSirina;
+        cin>>sobaDolzina;
+    	Soba s(sobaSirina,sobaDolzina,m);
+    	char adresa[30];
+        cin>>adresa;
+    	Kukja k(s,adresa);
+    	k.pecati();
+	}
+    
+    return 0;
+}

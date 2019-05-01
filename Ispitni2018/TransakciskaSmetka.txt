@@ -1,0 +1,159 @@
+Трансакциска сметка Problem 1 (0 / 0)
+Да се креира класа за опишување на една трансакција. За една трансакција се чуваат информации за (5 поени):
+
+Име на налогодавачот (динамички алоцирана низа од знаци )
+Број на сметка на налогодавачот (низа од 16 знаци)
+Износ на трансакцијата (реален број)
+Датум на трансакцијата (податок од дадената класа Datum)
+Сите податоци во класата треба да се приватни. Знаејќи дека бројот на сметка е низа од 15 цифри (и еден знак за ознака на крај на стринг) потребно е да се креира исклучок од типот InvalidAccountNumber ако се направи обид да се додели невалиден број на сметка. Класата за имплементација на исклучоци потребно е има соодветен конструктор и метод message за печатење на порака на екран. Пораката треба да биде “Non-digit account number format” во случај кога во бројот да има знак што не е цифра и “Error in the number of chars” во случај кога бројот на знаци е различен од 15. (5 поени)
+
+Да се имплементира операторот << за печатење на податоците од една трансакција (5 поени) во форматот (како што е дадено во тест примерите):
+
+Inflow iznos: Ime (broj_na_smetka) -day.month.year, ако износот е позитивен
+
+Outflow iznos: Ime (broj_na_smetka)-day.month.year, ако износот е негативен
+
+Да се креира класа за опишување на трансакциска сметка. За една трансакциска сметка се чуваат информации за (10 поени):
+
+Име на лицето (динамички алоцирана низа од знаци)
+Број на сметка (низа од 16 знаци)
+Листа од трансакции (Динамички алоцирана низа од објекти од класата Transaction)
+Број на трансакции (цел број)
+Капацитет на листата од трансакции (цел број)
+При креирање на објект од класата со празна листа на трансакции, треба да се креира листа со капацитет од 3 елементи, а притоа бројот на тансакции е 0.
+
+Во класата да се имплементират следните функции:
+
+void addTransaction (Transaction) - функција која додава нова трансакција. Ако во низата нема доволно капацитет, капацитетот на листата треба да се дуплира. (5 поени).
+
+void reportTransaction(Date from, Date to, bool isInflow) – во која ќе се испечати листа од сите трансакции поредени според датум од почетниот до крајниот датум во растечки редослед. Притоа ако аргументот isInflow има вредност true се печатат само трансакциите кои имаат позитивна вредност за износот. (10 поени).
+
+float getBalance() - функција која го враќа салдото. Салдото е вкупната сума од износите на сите трансакции (позитивни и негативни) (5 поени).
+Да се обезбедат сите методи за правилно функционирање на програмата. (5 поени)
+
+
+
+
+#include<iostream>
+#include<string.h>
+using namespace std;
+
+class Date{
+int dd,mm, yy;
+public:
+   Date(int d=1,int m=1,int g=1900){
+        dd=d;
+        mm=m;
+        yy=g;
+    }
+    static int compare(Date d1,Date d2){
+        if(d1.yy<d2.yy)       return 1;
+        else if (d1.yy>d2.yy) return -1;
+        else if (d1.mm<d2.mm) return 1;
+        else if (d1.mm>d2.mm) return -1;
+        else if (d1.dd<d2.mm) return 1;
+        else if (d1.dd>d2.dd) return -1;
+        else return 0;
+    }
+    int getDay() const{
+        return dd;
+    }
+    int getMonth()const{
+        return mm;
+    }
+    int getYear()const{
+        return yy;
+    }
+};
+
+//your code here
+
+int main(){
+
+char name[50],number[16];
+float amount;
+int d,m,y;
+int n;
+bool isInflow;
+TransactionAccount ta;
+int testcase;
+cin>>testcase;
+
+switch (testcase){
+  case 1:
+     {
+      cout<<"------Transaction test------"<<endl;
+      cin>>name;
+      cin>>number;
+      cin>>amount;
+      cin>>d>>m>>y;
+      Transaction t(name,number,amount,Date(d,m,y));
+      cout<<t;
+     }
+      break;
+  case 2:
+      {cout<<"------TransactionAccount test:constructor, desctuctor & get-functions------"<<endl;
+      cin>>name;
+      cin>>number;
+      TransactionAccount ta(name,number);
+      cin>>n;
+      for (int j=0;j<n;j++)
+      {
+          
+          cin>>name>>number>>amount>>d>>m>>y;
+          Transaction t(name,number,amount,Date(d,m,y));
+          ta.addTransaction(t);
+          
+      }
+      cout<<"Capacity: "<<ta.getTransCapacity()<<endl;
+      cout<<"Number of elements: "<<ta.getTransNumber()<<endl;
+      cin>>n;
+      cout<<"The element on position "<<n<<" is "<<endl;
+      cout<<(ta.getTransList())[n];
+      }  break;
+  case 3:
+      {cout<<"------TransactionAccount: getSaldo------"<<endl;
+      cin>>name;
+      cin>>number;
+      TransactionAccount ta(name,number);
+      cin>>n;
+      for (int j=0;j<n;j++)
+      {
+          
+          cin>>name>>number>>amount>>d>>m>>y;
+          Transaction t(name,number,amount,Date(d,m,y));
+          ta.addTransaction(t);
+          
+      }
+      cout<<"Balance: "<<ta.getBalance()<<endl;
+      }  break;
+  case 4:
+      {cout<<"------TransactionAccount: reportTransaction & Exception------"<<endl;
+      cin>>name;
+      cin>>number;
+      ta=TransactionAccount(name,number);
+      cin>>n;
+      for (int j=0;j<n;j++)
+      {
+          try{
+          cin>>name>>number>>amount>>d>>m>>y;
+          Transaction t(name,number,amount,Date(d,m,y));
+          ta.addTransaction(t);
+          }
+          catch (InvalidAccountNumber e){
+              e.print();
+          }
+      }
+      cin>>d>>m>>y;
+      Date d1(d,m,y);
+      cin>>d>>m>>y;
+      Date d2(d,m,y);
+      cin>>isInflow;
+      ta.reportTransaction(d1,d2,isInflow);
+      }  break;
+
+};
+
+return 0;
+}
+

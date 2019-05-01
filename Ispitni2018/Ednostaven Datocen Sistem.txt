@@ -1,0 +1,142 @@
+Едноставен датотечен систем Problem 19 (0 / 0)
+Со цел да помогнете во имплементација на новиот оперативен систем FinkiOS потребно е да се имплементираат неколку класи и методи кои што ќе се користат за функционирањето на датотечниот систем на овој оперативен систем.
+
+Да се креира апстрактна класата FileInformation во која што се чуваат информации за:
+
+името на датотеката (char [50])
+големина што ја зафаќа на диск датотеката (double)
+дозвола за читање (bool)
+дозвола за запишување (bool)
+дозвола за извршување (bool)
+Во класата треба да се дефинираат и два чисто виртуелни методи:
+
+void printFileInfo()
+double totalFileMemory()
+Дополнително да се имплементира и метод bool checkPermissionsAndSize (bool r, bool w, bool x, double size) што ќе враќа true доколку пермисиите на датотеката се соодветно rwx и доколку големината е помала од size.
+
+Во датотечниот систем постојат два типа на датотеки: обични датотеки (класа File) и директориуми/папки (Folder). Бидејќи системот е навистина едноставен, во една папка нема да може да се чуваат други папки, туки ќе се чуваат само обични датотеки (објекти од класата File). Затоа во класата Folder, дополнително се чува:
+
+динамички алоцирана низа од објекти од класата File
+бројот на датотеки во папката
+За двете изведени класи да се дефинираат соодветните конструктори (види повик во главната функција).
+
+За класата File да се имплементира помошен метод bool sameName(File &f) што ќе враќа true доколку моменталната датотека и датотеката f имаат исто име. Дополнително за класата Folder да се имплементира:
+
+оператор += за додавање на обична датотека во папката
+Доколку во папката постои датотека со исто име како новата датотека да се фрли исклучок (објект од класа FileAlreadyExist) и со истиот да се справите во главната функција
+get методи за низата од директориуми и за бројот на елементи во таа низа
+Да се имплементира оператор > што ќе споредува два објекти од каков било тип (File/Folder) според нивната меморија.
+
+Да се креира класа FileSystem со следните статички методи:
+
+static void printFileSystem(FileInformation ** fi, int n)што прима низа од покажувачи кон објекти од класаFileInformation и бројот на елементи во низата, а ги печати информациите за датотеките во низата fi
+static void printFileWithMaxSize(FileInformation ** fi, int n) што прима низа од покажувачи кон објекти од класаFileInformation и бројот на елементи во низата, a ги печати информациите за датотеката со најголема меморија
+static void printFilesLessThanWithPermissions(FileInformation ** fi, int n, bool r, bool w, bool x, int size) што ќе ги печати сите обични датотеки (објекти од класата File) што имаат меморија помала од size, и нивните привилегии соодветно се rwx. Напомена, доколку датотеката е папка (Folder), треба да се проверат и датотеките што се наоѓаат во неа.
+
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+class FileAlreadyExists {
+    //klasa za isklucokot
+    private:
+    //deklariranje na potrebnata promenliva
+    
+    public:
+    //konstruktor za klasata
+    
+    //void message() funkcija za pecatenje na poraka pri fakjanje na isklucokot
+};
+
+class FileInformation {
+    protected:
+    //deklariranje na site potrebni promenlivi
+    
+    public:
+    //konstruktor
+    
+    //deklariranje na chisto virtuelnite metodi
+    
+    
+};
+
+class File: { //izraz za nasleduvanje
+    public:
+    
+    //konstruktor za File
+    
+    //implementiranje na nasledenite cisto virtuelni metodi od FileInformation
+};
+
+class Folder: { //izraz za nasleduvanje
+    private:
+    //deklariranje na dopolnitelnite promenlivi
+    public:
+    
+    //konstruktor za File
+    
+    //operator +=
+    
+    //get-eri za dopolnitelnite promenlivi
+    
+    //implementiranje na nasledenite cisto virtuelni metodi od FileInformation
+};
+
+class FileSystem {
+    
+    static void printFileSystem(FileInformation ** fi, int n){
+        //TODO
+    }
+    
+    static void printFileWithMaxSize(FileInformation **fi, int n){
+        //TODO
+    }
+    
+    static void printFilesLessThanWithPermissions(FileInformation ** fi, int n, bool r, bool w, bool x, int size){
+        //TODO
+    }
+    
+    
+};
+
+
+int main() {
+	
+	int n; 
+	cin>>n;
+	FileInformation ** fi = new FileInformation * [n];
+	
+	for (int i=0;i<n;i++){
+		char name [50];
+		bool read, write, execute;
+		double size;
+		int type;
+		
+		cin>>type;
+		if (type==1) { //File
+			cin>>name>>size>>read>>write>>execute;
+			fi[i] = new File(name,size,read,write,execute);
+		}
+		else { //Folder
+			cin>>name>>read>>write>>execute;
+			fi[i] = new Folder(name,read,write,execute);
+			int N;
+            cin>>N;
+			for (int j=0;j<N;j++){
+                //cin>>N;
+				cin>>name>>size>>read>>write>>execute;
+				File f = File(name,size,read,write,execute);
+                Folder * folder = dynamic_cast<Folder *>(fi[i]);               
+				(*folder)+=f;                
+          	}
+		}
+	}
+	
+    cout<<"===TESTING printFileSystem()==="<<endl;
+	FileSystem::printFileSystem(fi,n);
+    cout<<"===TESTING printFileWithMaxSize()==="<<endl;
+    FileSystem::printFileWithMaxSize(fi,n);
+    cout<<"===TESTING printFilesLessThanWithPermissions()==="<<endl;
+    FileSystem::printFilesLessThanWithPermissions(fi,n,1,1,1,20.5);
+	return 0;
+}

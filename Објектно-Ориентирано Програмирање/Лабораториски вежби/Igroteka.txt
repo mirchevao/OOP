@@ -1,0 +1,121 @@
+#include <iostream>
+#include <cstring>
+#include <cmath>
+using namespace std;
+
+class Igrachka {
+public:
+    virtual double getMasa()=0;
+    virtual double getVolumen()=0;
+};
+
+class Forma {
+protected:
+    char *boja;
+    int gustina;
+public:
+    Forma() {
+    }
+    Forma(char *b, int g) {
+        boja=new char[strlen(b)+1];
+        strcpy(boja, b);
+        gustina=g;
+    }
+    ~Forma() {
+        delete [] boja;
+    }
+};
+
+class Kocka : public Forma, public Igrachka {
+private:
+    int visina;
+    int sirina;
+    int dlabocina;
+public:
+    Kocka() {
+    }
+    Kocka(int v, int s, int d, char *b, int g) : Forma(b, g) {
+        visina=v;
+        sirina=s;
+        dlabocina=d;
+    }
+    double getVolumen() {
+        return visina*sirina*dlabocina;
+    }
+    double getMasa() {
+        return getVolumen()*gustina;
+    }
+};
+
+class Topka : public Forma, public Igrachka {
+private:
+    int radius;
+public:
+    Topka() {
+    }
+    Topka(int r, char *b, int g) : Forma(b, g) {
+        radius=r;
+    }
+    double getVolumen() {
+        return 4.0 * radius * radius * radius * 3.14 / 3.0;
+    }
+    double getMasa(){
+        return getVolumen()*gustina;
+    }
+};
+
+int main() {
+    int n;
+    cin >> n;
+    Igrachka **kupche = new Igrachka*[n];
+    
+    char boja[30];
+    int gustina;
+    int visina;
+    int sirina;
+    int dlabocina;
+    int radius;
+    int tip;
+    for(int i=0; i<n; i++) {
+        cin >> tip;
+        if(tip==1) {
+            cin >> boja;
+            cin >> gustina;
+            cin >> radius;
+            
+            kupche[i]=new Topka(radius, boja, gustina);
+        }
+        if(tip==2) {
+            cin >> boja;
+            cin >> gustina;
+            cin >> visina;
+            cin >> sirina;
+            cin >> dlabocina;
+            kupche[i]=new Kocka(visina, sirina, dlabocina, boja, gustina);
+        }
+    }
+    cin >> boja >> gustina >>visina >> sirina >> dlabocina;
+    Kocka petra(visina, sirina, dlabocina, boja, gustina);
+    
+    double vkupno=0;
+    for(int i=0; i<n; i++) {
+        vkupno=vkupno+kupche[i]->getMasa();
+    }
+    if(vkupno > petra.getMasa()) {
+        cout << "DA" << endl;
+    }
+    else {
+        cout << "NE" << endl;
+    }
+   
+    double maxVolumen=kupche[0]->getVolumen();
+    for(int i=1; i<n; i++) {
+        if(maxVolumen < kupche[i]->getVolumen())
+        {
+            maxVolumen=kupche[i]->getVolumen();
+        }
+    }
+    
+    cout << "Razlikata e: " << abs(maxVolumen-petra.getVolumen());
+    return 0;
+}

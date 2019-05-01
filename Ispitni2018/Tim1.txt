@@ -1,0 +1,469 @@
+Тим 1 Problem 2 (0 / 0)
+Да се имплементира апстрактна класа FootballTeam во која се чува: (5 поени)
+
+име и презиме на тренерот (текстуална низа од најмногу 50 знаци)
+поле од головите што ги постигнал во натпреварите од последната година (на пр. {2, 5, 0, 1})
+број на елементи во полето (цел број)
+коефициент (реален број)
+Коефициентот е ист за сите тимови и може да го менува меѓународната фудбалска федерација. Да се обезбеди метод за негова промена. (5 поени)
+
+Од класата FootballTeam да се изведат класите Club и NationalTeam. За секој клуб дополнително се чува податок за неговото име (низа од најмногу 50 знаци) и бројот на медали што ги има освоено (цел број), а за репрезентацијата се чуваат податоци за земјата од каде доаѓа репрезентацијата (низа од најмногу 50 знаци) и вкупен број на меѓународни настапи (цел број). (5 поени) За секој објект од двете изведени класи треба да бидат на располагање следниве методи:
+
+преоптоварен оператор ++ (префикс нотација) за инкрементирање за 1 на бројот на освоени титули за класата Club, односно за инкрементирање на бројот на меѓународни настапи за класата NationalTeam (5 поени)
+
+метод achievement (5 поени), за пресметување на достигнувањето на тимот на следниот начин:
+
+За Club се пресметува како збир од збирот од сите голови помножен со коефициентот и бројот на титули (на пр. голови = {2, 5, 0, 1}, коефицинет = 2.0 и број на медали = 1, достигнување = 8x2 + 1 = 17)
+
+За NationalTeam како збир од збирот од сите голови помножен со коефициентот и бројот на меѓународни настапи (на пр. голови = {2, 5, 0, 1}, коефицинет = 2.0 и број на меѓународни настапи = 3, достигнување = 8x2+3 = 19)
+
+преоптоварен оператор > за споредба на два фудбалски тима од каков било вид (клубови или репрезентации) според достигнувањето (5 поени)
+
+преоптоварен оператор << за печатење на податоците во формат како во тест примерите (5 поени)
+
+Да се имплементира функција greatestАchievement што на влез прима низа од покажувачи кон FootballTeam и број на елементи во низата и го печати името на тренерот на тимот со најголемо достигнување, како и неговото достигнување (5 поени).
+
+Да се имплементира функција count што на влез прима низа од покажувачи кон FootballTeam и број на елементи во низата и ги печати посебно бројот на клубови и бројот на репрезентации во низата (5 поени).
+
+Да се обезбедат сите методи за правилно функционирање на програмата. (5 поени)
+
+
+#include <iostream>
+
+// Your code goes here 
+
+
+
+int main() {
+    int test_case_num;
+
+    cin>>test_case_num;
+
+    // for FootballTeam
+    char coachName[50];
+    int goals[100];
+    int no;
+
+    // for Club
+    char name[50];
+    int medals;
+
+    // for NationalTeam
+    char country[50];
+    int matches;
+
+    if (test_case_num == 1){
+        cout<<"Testing the class Club and operator<< for Club"<<endl;
+        cin.get();
+        cin.getline(coachName,50);
+        cin>>no;
+        for(int i = 0; i < no; i++){
+            cin>>goals[i];
+        }
+
+        cin.get();
+        cin.getline(name,50);
+        cin>>medals;
+
+        Club c(coachName, goals, no, name, medals);
+
+        cout<<c;
+    }
+    else if (test_case_num == 2){
+        cout<<"Testing the class NationalTeam and operator<< for NationalTeam"<<endl;
+        cin.get();
+        cin.getline(coachName,50);
+        cin>>no;
+        for(int i = 0; i < no; i++){
+            cin>>goals[i];
+        }
+
+        cin.get();
+        cin.getline(country,50);
+        cin>>matches;
+
+        NationalTeam r(coachName, goals, no, country, matches);
+
+        cout<<r;
+    }
+    else if (test_case_num == 3){
+        cout<<"Testing the operator ++ for Club"<<endl;
+        cin.get();
+        cin.getline(coachName,50);
+        cin>>no;
+        for(int i = 0; i < no; i++){
+            cin>>goals[i];
+        }
+
+        cin.get();
+        cin.getline(name,50);
+        cin>>medals;
+
+        Club c(coachName, goals, no, name, medals);
+        cout<<c;
+        ++c;
+        cout<<c;
+    }
+    else if (test_case_num == 4){
+        cout<<"Testing the operator ++ for NationalTeam"<<endl;
+        cin.get();
+        cin.getline(coachName,50);
+        cin>>no;
+        for(int i = 0; i < no; i++){
+            cin>>goals[i];
+        }
+
+        cin.get();
+        cin.getline(country,50);
+        cin>>matches;
+
+        NationalTeam r(coachName, goals, no, country, matches);
+        cout<<r;
+        ++r;
+        cout<<r;
+    }
+    else if (test_case_num == 5){
+        cout<<"Testing achievement for Club"<<endl;
+        cin.get();
+        cin.getline(coachName,50);
+        cin>>no;
+        for(int i = 0; i < no; i++){
+            cin>>goals[i];
+        }
+
+        cin.get();
+        cin.getline(name,50);
+        cin>>medals;
+
+        Club c(coachName, goals, no, name, medals);
+        cout<<c.achievement()<<endl;
+    }
+    else if (test_case_num == 6){
+        cout<<"Testing achievement for NationalTeam"<<endl;
+        cin.get();
+        cin.getline(coachName,50);
+        cin>>no;
+        for(int i = 0; i < no; i++){
+            cin>>goals[i];
+        }
+
+        cin.get();
+        cin.getline(country,50);
+        cin>>matches;
+
+        NationalTeam r(coachName, goals, no, country, matches);
+        cout<<r.achievement();
+    }
+    else if (test_case_num == 7){
+        cout<<"Testing achievement"<<endl;
+
+        int numTeams, teamType;
+        cin>>numTeams;
+
+        FootballTeam** ft = new FootballTeam*[numTeams];
+
+        for(int j = 0; j < numTeams; j++){
+
+            cin>>teamType; // 1-Club, 2-NationalTeam
+            if(teamType == 1){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(name,50);
+                cin>>medals;
+
+                ft[j] = new Club(coachName, goals, no, name, medals);
+            }
+            if(teamType == 2){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(country,50);
+                cin>>matches;
+
+                NationalTeam r(coachName, goals, no, country, matches);
+                ft[j] = new NationalTeam (coachName, goals, no, country, matches);
+            }
+        }
+
+        for(int j = 0; j < numTeams; j++){
+            cout<<ft[j]->achievement()<<endl;
+        }
+        
+        for(int i = 0; i < numTeams; i++)
+            delete ft[i];
+        delete[]ft;
+    }
+    else if (test_case_num == 8){
+        cout<<"Testing achievement"<<endl;
+
+        int numTeams, teamType;
+        cin>>numTeams;
+
+        float k;
+        cin>>k;
+
+        FootballTeam::setK(k);
+
+        FootballTeam** ft = new FootballTeam*[numTeams];
+
+        for(int j = 0; j < numTeams; j++){
+
+            cin>>teamType; // 1-Club, 2-NationalTeam
+            if(teamType == 1){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(name,50);
+                cin>>medals;
+
+                ft[j] = new Club(coachName, goals, no, name, medals);
+            }
+            if(teamType == 2){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(country,50);
+                cin>>matches;
+
+                NationalTeam r(coachName, goals, no, country, matches);
+                ft[j] = new NationalTeam (coachName, goals, no, country, matches);
+            }
+        }
+
+        for(int j = 0; j < numTeams; j++){
+            cout<<ft[j]->achievement()<<endl;
+        }
+        for(int i = 0; i < numTeams; i++)
+            delete ft[i];
+        delete[]ft;
+    }
+    else if (test_case_num == 9){
+        cout<<"Testing operator >"<<endl;
+
+        int numTeams, teamType;
+        cin>>numTeams;
+
+        FootballTeam** ft = new FootballTeam*[numTeams];
+
+        for(int j = 0; j < numTeams; j++){
+
+            cin>>teamType; // 1-Club, 2-NationalTeam
+            if(teamType == 1){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(name,50);
+                cin>>medals;
+
+                ft[j] = new Club(coachName, goals, no, name, medals);
+            }
+            if(teamType == 2){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(country,50);
+                cin>>matches;
+
+                NationalTeam r(coachName, goals, no, country, matches);
+                ft[j] = new NationalTeam (coachName, goals, no, country, matches);
+            }
+        }
+
+        for(int j = 0; j < numTeams; j++){
+            for(int i = j + 1; i < numTeams; i++)
+                if(*ft[j] > *ft[i])
+                    cout<<"1"<<endl;
+                else if(*ft[i] > *ft[j])
+                    cout<<"2"<<endl;
+                else cout<<"0"<<endl;
+        }
+        
+        for(int i = 0; i < numTeams; i++)
+            delete ft[i];
+        delete[]ft;
+    }
+    else if (test_case_num == 10){
+        cout<<"Testing greatestАchievement"<<endl;
+
+        int numTeams, teamType;
+        cin>>numTeams;
+
+        FootballTeam** ft = new FootballTeam*[numTeams];
+
+        for(int j = 0; j < numTeams; j++){
+
+            cin>>teamType; // 1-Club, 2-NationalTeam
+            if(teamType == 1){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(name,50);
+                cin>>medals;
+
+                ft[j] = new Club(coachName, goals, no, name, medals);
+            }
+            if(teamType == 2){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(country,50);
+                cin>>matches;
+
+                NationalTeam r(coachName, goals, no, country, matches);
+                ft[j] = new NationalTeam (coachName, goals, no, country, matches);
+            }
+        }
+
+        greatestАchievement(ft,numTeams);
+        
+        for(int i = 0; i < numTeams; i++)
+            delete ft[i];
+        delete[]ft;
+    }
+    else if (test_case_num == 11){
+        cout<<"Testing count"<<endl;
+
+        int numTeams, teamType;
+        cin>>numTeams;
+
+        FootballTeam** ft = new FootballTeam*[numTeams];
+
+        for(int j = 0; j < numTeams; j++){
+
+            cin>>teamType; // 1-Club, 2-NationalTeam
+            if(teamType == 1){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(name,50);
+                cin>>medals;
+
+                ft[j] = new Club(coachName, goals, no, name, medals);
+            }
+            if(teamType == 2){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(country,50);
+                cin>>matches;
+
+                NationalTeam r(coachName, goals, no, country, matches);
+                ft[j] = new NationalTeam (coachName, goals, no, country, matches);
+            }
+        }
+
+        count(ft,numTeams);
+        
+        for(int i = 0; i < numTeams; i++)
+            delete ft[i];
+        delete[]ft;
+    }
+    else if (test_case_num == 12){
+        cout<<"Test All"<<endl;
+
+        int numTeams, teamType;
+        cin>>numTeams;
+
+        float k;
+        cin>>k;
+
+        FootballTeam::setK(k);
+
+        FootballTeam** ft = new FootballTeam*[numTeams];
+
+        for(int j = 0; j < numTeams; j++){
+
+            cin>>teamType; // 1-Club, 2-NationalTeam
+            if(teamType == 1){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(name,50);
+                cin>>medals;
+
+                ft[j] = new Club(coachName, goals, no, name, medals);
+            }
+            if(teamType == 2){
+                cin.get();
+                cin.getline(coachName,50);
+                cin>>no;
+                for(int i = 0; i < no; i++){
+                    cin>>goals[i];
+                }
+
+                cin.get();
+                cin.getline(country,50);
+                cin>>matches;
+
+                NationalTeam r(coachName, goals, no, country, matches);
+                ft[j] = new NationalTeam (coachName, goals, no, country, matches);
+            }
+        }
+
+        for(int j = 0; j < numTeams; j++){
+            cout<<"Achievement: "<<ft[j]->achievement()<<endl;
+        }
+        greatestАchievement(ft,numTeams);
+        count(ft,numTeams);
+        
+        for(int i = 0; i < numTeams; i++)
+            delete ft[i];
+        delete[]ft;
+    }
+}

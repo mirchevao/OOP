@@ -1,0 +1,161 @@
+/*
+Во една игротека има 2 типа играчки: топки и коцки. Коцките и топките се опишани со параметри како што се боја (char *) и густина (int). Дополнително за топките се знае и радиусот (int), додека за коцките целосните димензии (висина, ширина и длабочина – int).
+
+За секоја од класите треба да се дефинираат методи getMasa() и getVolumen(). Масата на играчката се пресметува како производ од волуменот и густината на играчката.
+
+Во функцијата main да се декларира променлива kupche што претставува динамички алоцирана низа кон Igrachka. Во зависност од првиот влезен параметар се внесуваат објекти од класите Topka или Kocka (1 - се внесува топка, 2 - се внесува коцка).
+
+Од тастатура да се внесат податоци за коцката на Петра Kocka petra. Во главната функција во да се отпечатат:
+
+Да се отпечати DA ако вкупната маса на сите играчки е поголема од масата на играчката на Петра, а NE во спротивно.
+Разликата по апсолутна вредност на волуменот на играчката со максимален волумен во купчето и волуменот на коцката на Петра. Форматот е:
+
+Razlikata e: {razlika}
+
+Задачата да се реши со тоа што класите Kocka и Topka ќе наследуваат од класите Forma и Igrachka.
+
+Sample input:
+3
+1
+zelena
+50
+7
+2
+crvena
+10
+2
+3
+1
+2
+zolta
+10
+1
+2
+3
+zelena
+15
+2
+2
+3
+
+Sample output:
+DA
+Razlikata e: 1424.03
+*/
+
+#include <iostream>
+#include <cstring>
+#include <cmath>
+using namespace std;
+ 
+class Igrachka
+{
+public:
+    virtual double getVolumen()=0;
+    virtual double getMasa()=0;
+};
+ 
+class Forma
+{
+protected:
+    char *boja;
+    int gustina;
+public:
+    Forma(char *b="",int g=0)
+    {
+        boja=new char[strlen(b)+1];
+        strcpy(boja,b);
+        gustina=g;
+    }
+    ~Forma()
+    {
+        delete [] boja;
+    }
+};
+ 
+class Kocka:public Forma,public Igrachka
+{
+private:
+    int visina;
+    int sirina;
+    int dlabocina;
+public:
+    Kocka(char *b="",int g=0,int v=0,int s=0,int d=0):Forma(b,g)
+    {
+        visina=v;
+        sirina=s;
+        dlabocina=d;
+    }
+    double getVolumen()
+    {
+        return visina*sirina*dlabocina;
+    }
+    double getMasa()
+    {
+        return getVolumen()*gustina;
+    }
+};
+ 
+class Topka:public Forma,public Igrachka
+{
+private:
+    int radius;
+public:
+    Topka(char *b="",int g=0,int r=0):Forma(b,g)
+    {
+        radius=r;
+    }
+    double getVolumen()
+    {
+        return 3.14*4/3*radius*radius*radius;
+    }
+    double getMasa()
+    {
+        return getVolumen()*gustina;
+    }
+};
+ 
+int main()
+{
+    int n,p;
+    cin>>n;
+    char boja[50];
+    int gustina,radius,visina,sirina,dlabocina;
+    Igrachka **kupche=new Igrachka*[n];
+    for(int i=0;i<n;i++)
+    {
+        cin>>p;
+        if(p==1)
+        {
+            cin>>boja>>gustina>>radius;
+            kupche[i]=new Topka(boja,gustina,radius);
+        }
+        if(p==2)
+        {
+            cin>>boja>>gustina>>visina>>sirina>>dlabocina;
+            kupche[i]=new Kocka(boja,gustina,visina,sirina,dlabocina);
+        }
+    }
+    cin>>boja>>gustina>>visina>>sirina>>dlabocina;
+    Kocka petra(boja,gustina,visina,sirina,dlabocina);
+ 
+    double vkp=0;
+    for(int i=0;i<n;i++)
+    {
+        vkp=vkp+kupche[i]->getMasa();
+    }
+    if(vkp>petra.getMasa())
+        cout<<"DA"<<endl;
+    else
+        cout<<"NE"<<endl;
+    double maxvolumen=kupche[0]->getVolumen();
+    for(int i=1;i<n;i++)
+    {
+        if(maxvolumen<kupche[i]->getVolumen())
+        {
+            maxvolumen=kupche[i]->getVolumen();
+        }
+    }
+    cout<<"Razlikata e: "<<abs(maxvolumen-petra.getVolumen());
+    return 0;
+}

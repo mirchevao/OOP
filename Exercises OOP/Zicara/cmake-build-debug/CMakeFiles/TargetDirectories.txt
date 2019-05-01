@@ -1,0 +1,3 @@
+C:/Users/PC/Desktop/Exercises OOP/Zichara/cmake-build-debug/CMakeFiles/Zichara.dir
+C:/Users/PC/Desktop/Exercises OOP/Zichara/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/PC/Desktop/Exercises OOP/Zichara/cmake-build-debug/CMakeFiles/rebuild_cache.dir

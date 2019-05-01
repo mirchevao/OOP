@@ -1,0 +1,197 @@
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <string>
+
+using namespace std;
+
+class Automobile
+{
+private:
+    char *marka;
+    int *registracija, maksimalnaBrzina;
+public:
+    Automobile()
+    {
+        this->marka=NULL;
+        this->registracija=NULL;
+    }
+
+    Automobile(const char* mar, const int* reg, int maksimalna=0)
+    {
+        this->marka=new char[strlen(mar)+1];
+        strcpy(this->marka, mar);
+
+        this->registracija=new int[5];
+        copy(reg, reg+5, this->registracija);
+
+        this->maksimalnaBrzina=maksimalna;
+    }
+
+    Automobile (const Automobile& a)
+    {
+        delete []this->marka;
+        this->marka=new char[strlen(a.marka)+1];
+        strcpy(this->marka, a.marka);
+
+        delete []this->registracija;
+        this->registracija=new int[5];
+        copy(a.registracija, a.registracija+5, this->registracija);
+
+        this->maksimalnaBrzina=a.maksimalnaBrzina;
+    }
+
+    ~Automobile()
+    {
+        delete []this->marka;
+        delete []this->registracija;
+    }
+
+    Automobile& operator=(const Automobile& a)
+    {
+        if (this!=&a)
+        {
+            delete []this->marka;
+            this->marka=new char[strlen(a.marka)+1];
+            strcpy(this->marka, a.marka);
+
+            delete []this->registracija;
+            this->registracija=new int[5];
+            copy(a.registracija, a.registracija+5, this->registracija);
+
+            this->maksimalnaBrzina=a.maksimalnaBrzina;
+        }
+        return *this;
+    }
+
+    bool operator==(const Automobile& a)
+    {
+        bool ret=true;
+        for (int i=0; i<5; ++i)
+            ret=(ret&&(this->registracija[i]==a.registracija[i]));
+        return ret;
+    }
+    friend ostream& operator<<(ostream& out, Automobile& a)
+    {
+        out << "Marka\t" << a.marka << "\tRegistracija[ ";
+        for (int i=0; i<5; ++i)
+            out << a.registracija[i] << " ";
+        out << "]" << endl;
+        return out;
+    }
+
+    int getMaxSpeed()
+    {
+        return this->maksimalnaBrzina;
+    }
+
+};
+
+bool pred(Automobile a, Automobile b)
+{
+    return !(a==b);
+}
+
+class RentACar
+{
+private:
+    char ime[100];
+    Automobile *avto;
+    int brojNaAvtomobili;
+public:
+    RentACar(char* i)
+    {
+        strcpy(ime,i);
+        this->avto=new Automobile[0];
+        this->brojNaAvtomobili=0;
+    }
+    ~RentACar()
+    {
+        delete []this->avto;
+    }
+
+    RentACar& operator+=(const Automobile& a)
+    {
+        Automobile *tmp=new Automobile[this->brojNaAvtomobili+1];
+        copy(this->avto, this->avto+brojNaAvtomobili, tmp);
+        tmp[brojNaAvtomobili++]=a;
+        this->avto=tmp;
+        return *this;
+    }
+
+    RentACar& operator-=(const Automobile& a)
+    {
+        /*
+        for (int i=0; i<this->brojNaAvtomobili; ++i)
+            if (this->avto[i]==a)
+                this->avto[i]=a;
+                */
+        int newSize=0;
+        for (int i=0; i<this->brojNaAvtomobili; ++i)
+            if (!(this->avto[i]==a))
+                newSize++;
+        Automobile *tmp=new Automobile[newSize];
+        //copy_if(this->avto, this->avto+this->brojNaAvtomobili, tmp, pred))
+        int pom=0;
+        for (int i=0; i<this->brojNaAvtomobili; ++i)
+            if (!(this->avto[i]==a))
+            {
+                tmp[pom++]=this->avto[i];
+            }
+        this->brojNaAvtomobili=newSize;
+        this->avto=tmp;
+        return *this;
+    }
+
+    void pecatiNadBrzina(int brzina)
+    {
+        cout << this->ime << endl;
+        for (int i=0; i<this->brojNaAvtomobili; ++i)
+            if (this->avto[i].getMaxSpeed()>brzina)
+                cout << avto[i];
+    }
+};
+
+int main()
+{
+   RentACar agencija("FINKI-Car");
+   int n;
+   cin>>n;
+
+   for (int i=0;i<n;i++)
+   {
+    	char marka[100];
+    	int regisracija[5];
+    	int maximumBrzina;
+
+       	cin>>marka;
+
+       	for (int i=0;i<5;i++)
+    		cin>>regisracija[i];
+
+    	cin>>maximumBrzina;
+
+       	Automobile nov=Automobile(marka,regisracija,maximumBrzina);
+
+    	//dodavanje na avtomobil
+       	agencija+=nov;
+
+   }
+    //se citha grehsniot avtmobil, za koj shto avtmobilot so ista registracija treba da se izbrishe
+    char marka[100];
+    int regisracija[5];
+    int maximumBrzina;
+    cin>>marka;
+    for (int i=0;i<5;i++)
+    cin>>regisracija[i];
+    cin>>maximumBrzina;
+
+    Automobile greshka=Automobile(marka,regisracija,maximumBrzina);
+
+    //brishenje na avtomobil
+    agencija-=greshka;
+
+    agencija.pecatiNadBrzina(150);
+
+    return 0;
+}

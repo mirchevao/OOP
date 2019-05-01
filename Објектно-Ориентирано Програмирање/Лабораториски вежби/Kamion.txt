@@ -1,0 +1,217 @@
+#include <iostream>
+#include <cstring>
+#include <cmath>
+using namespace std;
+
+class ImaMasa {
+public:
+    virtual double vratiMasa()=0;
+    virtual void pecati()=0;
+};
+
+class PaketPijalok {
+protected:
+    double volumenEden;
+    int kolicina;
+public:
+    static const double gustina=0.8;
+    static const double ambalaza=0.2;
+    PaketPijalok() {
+    }
+    PaketPijalok(double v, int k) {
+        volumenEden=v;
+        kolicina=k;
+    }
+    double getVolumen() {
+        return volumenEden;
+    }
+    int getKolicina() {
+        return kolicina;
+    }
+    int getGustina() {
+        return gustina;
+    }
+    double vratiMasa() {
+        return (volumenEden*gustina+ambalaza)*getKolicina();
+    }
+    void pecati() {
+        cout << "kolicina " << kolicina;
+    }
+};
+
+class PaketSok : public PaketPijalok, public ImaMasa {
+private:
+    bool daliGaziran;
+public:
+    PaketSok() {
+    }
+    PaketSok(double v, int k, bool d) : PaketPijalok(v,k) {
+        daliGaziran=d;
+    }
+    double vratiMasa() {
+        if(daliGaziran==true) {
+            return PaketPijalok::vratiMasa();
+        }
+        else {
+            PaketPijalok::vratiMasa()+(0.1*PaketPijalok::getKolicina());
+        }
+    }
+    void pecati() {
+        cout << "Paket sok" << endl;
+        cout << "kolicina " << kolicina << ", so po " << volumenEden*gustina << " l(dm3)" << endl;
+    }
+};
+
+class PaketVino : public PaketPijalok, public ImaMasa {
+private:
+    double procentAlkohol;
+public:
+    PaketVino() {
+    }
+    PaketVino(double v, int k, double p) : PaketPijalok(v,k) {
+        try {
+            procentAlkohol=p;
+            if(procentAlkohol<0 || procentAlkohol>1) {
+                throw 1;
+            }
+        }
+        catch (int) {
+            cout<<"Pogresno vnesen procent na alkohol!"<<endl;
+            procentAlkohol=0;
+        }
+    }
+    double getProcentAlkohol() {
+        return procentAlkohol;
+    }
+    double vratiMasa() {
+        return PaketPijalok::vratiMasa()*(0.9+procentAlkohol);
+    }
+    void pecati() {
+        cout << "Paket vino" << endl;
+        cout << "kolicina " << kolicina << ", " << procentAlkohol*100 << "% alkohol od po " << volumenEden*gustina << " l(dm3)" << endl;
+    }
+};
+
+class Kamion {
+public:
+    char *registracija;
+    char *vozac;
+    ImaMasa **niza;
+    int brojPaketi;
+    Kamion() {
+    }
+    Kamion(char *r, char *v) {
+        if(!(isalpha(r[0])&&isalpha(r[1]) && isalpha(r[7]) && isalpha(r[6]))) {
+			throw 0;
+        }
+        brojPaketi=0;
+        registracija=new char[strlen(r)];
+        vozac=new char[strlen(v)];
+        strcpy(registracija, r);
+        strcpy(vozac, v);
+    }
+    Kamion(char *r, char *v, ImaMasa **n, int b) {
+        niza=new ImaMasa*[b];
+        for(int i=0; i<b; i++) {
+            niza[i]=n[i];
+        }
+        brojPaketi=b;
+    }
+    void setRegistracija(char *r) {
+        strcpy(registracija, r);
+    }
+    void setVozac(char *v) {
+        strcpy(vozac, v);
+    }
+    void setPaketi(int b) {
+        brojPaketi=b;
+    }
+    void dodadiElement(ImaMasa *n) {
+        ImaMasa **pom=new ImaMasa*[brojPaketi+1];
+        for(int i=0; i<brojPaketi; i++) {
+            pom[i]=niza[i];
+        }
+        pom[brojPaketi]=n;
+        brojPaketi++;
+        niza=new ImaMasa*[brojPaketi];
+        for(int i=0; i<brojPaketi; i++) {
+            niza[i]=pom[i];
+        } 
+    }
+    double vratiVkupnaMasa() {
+        double vkupno=0;
+        for(int i=0; i<brojPaketi; i++) {
+            vkupno=vkupno+niza[i]->vratiMasa();
+        }
+        return vkupno+5;
+    }
+    void pecati() {
+        cout << "Kamion so registracija " << registracija << " i vozac " << vozac << " prenesuva: " << endl;
+        for(int i=0; i<brojPaketi; i++) {
+                niza[i]->pecati();
+        }
+    }
+    Kamion pretovar(char *r, char *v) {
+        Kamion nov(r, v);
+        int maxPozicija=0;
+        double maxMasa=niza[0]->vratiMasa();
+        for(int i=0; i<brojPaketi; i++) {
+            if(niza[i]->vratiMasa() > maxMasa) {
+                maxMasa=niza[i]->vratiMasa();
+                maxPozicija=i;
+            }
+        }
+        for(int i=0; i<brojPaketi; i++) {
+            if(i!=maxPozicija) {
+                nov.dodadiElement(niza[i]);
+            }
+        }
+        return nov;
+    }
+};
+
+int main()
+{
+    char ime[20], reg[9];
+    double vol;
+    int kol;
+    bool g;
+    double proc;
+    try {
+            cin>>reg;
+            cin>>ime;
+            Kamion A(reg, ime);
+            ImaMasa **d = new ImaMasa*[5];
+            cin>>vol>>kol;
+            cin>>g;
+            d[0] = new PaketSok(vol, kol, g);
+            cin>>vol>>kol;
+            cin>>proc;
+            d[1] = new PaketVino(vol, kol, proc);
+            cin>>vol>>kol;
+            cin>>proc;
+            d[2] = new PaketVino(vol, kol, proc);
+            cin>>vol>>kol;
+            cin>>g;
+            d[3] = new PaketSok(vol, kol, g);
+            cin>>vol>>kol;
+            cin>>proc;
+            d[4] = new PaketVino(vol, kol, proc);
+
+            A.dodadiElement(d[0]);
+            A.dodadiElement(d[1]);
+            A.dodadiElement(d[2]);
+            A.dodadiElement(d[3]);
+            A.dodadiElement(d[4]);
+            A.pecati();
+            cout<<"Vkupna masa: "<<A.vratiVkupnaMasa()<<endl;
+            cin>>reg;
+            cin>>ime;
+            Kamion B = A.pretovar(reg, ime);
+            B.pecati();
+            cout<<"Vkupna masa: "<<B.vratiVkupnaMasa()<<endl;
+	}
+    catch(int) {
+		cout<<"Pogresno vnesena registracija"<<endl;
+	}
+}

@@ -1,0 +1,125 @@
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+#include <cstdlib>
+
+using namespace std;
+
+class Forma
+{
+private:
+    char boja[7];
+    int pozX, pozY;
+public:
+    Forma()
+    {
+        *boja=0;
+        this->pozX=this->pozY=0;
+    }
+    Forma(char* _boja, int _pozX, int _pozY)
+    {
+        strcpy(this->boja, _boja);
+        this->pozX=_pozX;
+        this->pozY=_pozY;
+    }
+    friend ostream& operator<<(ostream& out, Forma& ob)
+    {
+        out << ob.boja << endl << ob.pozX << ", " << ob.pozY << endl << ob.plostina() << endl;
+        return out;
+    }
+    virtual float plostina()=0;
+    bool operator<(Forma& ob)
+    {
+        return this->plostina() < ob.plostina();
+    }
+};
+
+class Elipsa:public Forma
+{
+private:
+    int a, b;
+public:
+    Elipsa():Forma()
+    {
+        this->a=this->b=0;
+    }
+    Elipsa(char* _boja, int _pozX, int _pozY, int _a, int _b):
+        Forma(_boja, _pozX, _pozY)
+        {
+            this->a=_a;
+            this->b=_b;
+        }
+    float plostina()
+    {
+        return 3.14*a*b;
+    }
+
+};
+
+class Kvadrat:public Forma
+{
+private:
+    int a;
+public:
+    Kvadrat():Forma()
+    {
+        this->a=0;
+    }
+    Kvadrat(char* _boja, int _pozX, int _pozY, int _a):
+        Forma(_boja, _pozX, _pozY)
+        {
+            this->a=_a;
+        }
+    float plostina()
+    {
+        return a*a;
+    }
+
+};
+
+void top3(Forma** niza, int n)
+{
+    bool *temp=new bool[n];
+    memset(temp, true, n);
+    for (int k=0; k<3; ++k)
+    {
+        int maxPoz;
+        for (int i=0; i<n; ++i)
+            if (temp[i])
+            {
+                maxPoz=i;
+                break;
+            }
+        for (int i=0; i<n; ++i)
+            if (*niza[maxPoz]<*niza[i]&&temp[i])
+            	maxPoz=i;
+        temp[maxPoz]=false;
+        cout << *niza[maxPoz];
+    }
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+	Forma** pole = new Forma*[2 * n];
+    char boja[7];
+    int x, y;
+
+    for(int i = 0; i < n; ++i) {
+        int a, b;
+        cin >> boja >> x >> y >> a >> b;
+        pole[i] = new Elipsa(boja, x, y, a, b);
+    }
+    for(int i = 0; i < n; ++i) {
+        int a;
+        cin >> boja >> x >> y >> a;
+        pole[n + i] = new Kvadrat(boja, x, y, a);
+    }
+	top3(pole, 2 * n);
+	for (int i = 0; i < 2 * n; i++) {
+		delete pole[i];
+	}
+    delete [] pole;
+	return 0;
+}

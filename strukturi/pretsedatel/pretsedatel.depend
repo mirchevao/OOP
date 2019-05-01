@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1519260166 source:c:\users\user\desktop\strukturi\pretsedatel\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
